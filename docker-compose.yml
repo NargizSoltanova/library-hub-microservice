@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  postgres-users:
+    image: postgres:17
+    container_name: library-postgres-users
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: users_db
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
