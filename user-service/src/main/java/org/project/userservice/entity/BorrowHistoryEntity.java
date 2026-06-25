@@ -22,16 +22,17 @@ public class BorrowHistoryEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @Column(nullable = false)
-    private Long book_id;
+    @Column(name = "book_id", nullable = false)
+    private Long bookId;
 
-    @Column(nullable = false)
-    private String book_name;
+    @Column(name = "book_name", nullable = false)
+    private String bookName;
 
-    @Column(nullable = false)
-    private LocalDateTime borrowed_at;
+    @Column(name = "borrowed_at", nullable = false)
+    private LocalDateTime borrowedAt;
 
-    private LocalDateTime returned_at;
+    @Column(name = "returned_at")
+    private LocalDateTime returnedAt;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
