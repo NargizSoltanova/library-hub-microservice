@@ -48,12 +48,12 @@ public class UserService {
                 .map(userMapper::toResponse);
     }
 
-    private UserEntity getUserEntity(Long id) {
+    public UserEntity getUserEntity(Long id) {
         return userRepository.findById(id).orElseThrow(
                 () ->  new UserNotFoundException("User not found"));
     }
 
-    private UserEntity getUserEntity() {
+    public UserEntity getUserEntity() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new UserNotFoundException("User not authenticated");
