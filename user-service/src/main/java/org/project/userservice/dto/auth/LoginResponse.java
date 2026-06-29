@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class LoginResponse {
     private String accessToken;
+    @Builder.Default
     private String tokenType = "Bearer";
     private Long expiresIn;
 }
