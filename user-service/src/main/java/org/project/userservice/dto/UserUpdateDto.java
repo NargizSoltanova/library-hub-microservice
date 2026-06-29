@@ -1,18 +1,17 @@
 package org.project.userservice.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.project.userservice.constant.Role;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
-    private Long id;
-    private String username;
+public class UserUpdateDto {
+    @NotBlank @Email
     private String email;
+    @NotBlank
     private String fullName;
-    private Role role;
-    private Boolean isActive;
 }
