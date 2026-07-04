@@ -8,6 +8,8 @@ import org.project.userservice.dto.auth.LoginResponse;
 import org.project.userservice.dto.auth.RegisterRequest;
 import org.project.userservice.dto.auth.RegisterResponse;
 import org.project.userservice.entity.UserEntity;
+import org.project.userservice.exception.BadRequestException;
+import org.project.userservice.exception.ConflictException;
 import org.project.userservice.repository.UserRepository;
 import org.project.userservice.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,6 +44,19 @@ public class AuthService {
     }
 
     public RegisterResponse register(RegisterRequest registerRequest) {
+
+        if (userRepository.existsByUsername(registerRequest.getUsername())) {
+            throw new ConflictException(
+                    "Username already exists."
+            );
+        }
+
+        if(userRepository.existsByEmail(registerRequest.getEmail())) {
+            throw new ConflictException(
+                    "Email already exists."
+            );
+        }
+
         var user = UserEntity.builder()
                 .username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
