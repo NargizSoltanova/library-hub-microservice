@@ -1,9 +1,12 @@
 package org.project.userservice.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.project.userservice.dto.UserBorrowHistoryDto;
 import org.project.userservice.dto.UserResponse;
 import org.project.userservice.dto.UserUpdateDto;
+import org.project.userservice.service.BorrowHistoryService;
 import org.project.userservice.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,11 +14,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
+@SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private  final BorrowHistoryService borrowHistoryService;
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> me() {
@@ -27,6 +34,11 @@ public class UserController {
             @Valid @RequestBody UserUpdateDto userDto) {
 
         return ResponseEntity.ok(userService.update(userDto));
+    }
+
+    @GetMapping("/me/borrows")
+    public ResponseEntity<List<UserBorrowHistoryDto>>  meBorrowHistory(){
+        return ResponseEntity.ok(borrowHistoryService.myBorrowHistory());
     }
 
     @GetMapping
