@@ -1,0 +1,86 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-borrows-table
+      author: nargiz
+
+      changes:
+        - createTable:
+            tableName: borrows
+
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: book_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: borrowed_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: due_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: returned_at
+                  type: TIMESTAMP
+
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: borrows
+            baseColumnNames: book_id
+            referencedTableName: books
+            referencedColumnNames: id
+            constraintName: fk_borrows_book
+
+        - createIndex:
+            tableName: borrows
+            indexName: idx_borrows_book
+            columns:
+              - column:
+                  name: book_id
+
+        - createIndex:
+            tableName: borrows
+            indexName: idx_borrows_user
+            columns:
+              - column:
+                  name: user_id
+
+        - createIndex:
+            tableName: borrows
+            indexName: idx_borrows_status
+            columns:
+              - column:
+                  name: status
+
+        - createIndex:
+            tableName: borrows
+            indexName: idx_borrows_due_date
+            columns:
+              - column:
+                  name: due_date

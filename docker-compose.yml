@@ -14,9 +14,27 @@ services:
       - "5432:5432"
 
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_users_data:/var/lib/postgresql/data
+
+    restart: unless-stopped
+
+  postgres-books:
+    image: postgres:17
+    container_name: library-postgres-books
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: books_db
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - postgres_books_data:/var/lib/postgresql/data
 
     restart: unless-stopped
 
 volumes:
-  postgres_data:
+  postgres_users_data:
+  postgres_books_data:
