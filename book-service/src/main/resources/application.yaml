@@ -13,3 +13,6 @@ spring:
 
 server:
   port: 8082
+
+jwt:
+  secret: 11f4faa6ee78d80d114ecb683ab010f1aa16796db7e4c2ec1632f416d8dd10cd
