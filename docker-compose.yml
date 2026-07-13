@@ -35,6 +35,13 @@ services:
 
     restart: unless-stopped
 
+  redis:
+    image: redis:7-alpine
+    container_name: library-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
 volumes:
   postgres_users_data:
   postgres_books_data:

@@ -11,6 +11,17 @@ spring:
     hibernate:
       ddl-auto: validate
 
+  data:
+    redis:
+        host: localhost  #redis
+        port: 6379
+        connect-timeout: 2s
+        timeout: 2s
+
+  cache:
+    type: redis
+    cache-names: books
+
 server:
   port: 8082
 
