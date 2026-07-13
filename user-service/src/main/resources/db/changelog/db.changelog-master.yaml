@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/v1.0/001_create_users_table.yaml
   - include:
       file: db/changelog/v1.0/002_create_borrow_history_table.yaml
+  - include:
+      file: db/changelog/v1.0/003_add_last_login_at_to_users.yaml

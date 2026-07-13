@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-last-login-at-to-users
+      author: nargiz
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: last_login_at
+                  type: TIMESTAMP

@@ -52,6 +52,9 @@ public class UserEntity implements UserDetails {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "last_login_at")
+    private LocalDateTime lastLoginAt;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<BorrowHistoryEntity> borrowHistories;
 
