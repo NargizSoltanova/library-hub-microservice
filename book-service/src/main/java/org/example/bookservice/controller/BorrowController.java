@@ -23,24 +23,24 @@ public class BorrowController {
     @PostMapping
     public ResponseEntity<BorrowResponse> borrow(
             @Valid @RequestBody BorrowRequest request,
-            @AuthenticationPrincipal Long userId
-    ) {
+            @AuthenticationPrincipal(expression = "id") Long userId) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(borrowService.borrow(request.getBookId(), userId));
     }
 
     @PostMapping("/{id}/return")
-    public ResponseEntity<BorrowResponse> returnBook(@PathVariable Long id, @AuthenticationPrincipal Long userId) {
+    public ResponseEntity<BorrowResponse> returnBook(
+            @PathVariable Long id,
+            @AuthenticationPrincipal(expression = "id") Long userId) {
 
         return ResponseEntity.ok(borrowService.returnBook(id, userId));
     }
 
     @GetMapping("/my")
     public ResponseEntity<Page<BorrowResponse>> getMyBorrows(
-            @AuthenticationPrincipal Long userId,
-            @PageableDefault(sort = "borrowedAt") Pageable pageable
-    ) {
+            @AuthenticationPrincipal(expression = "id") Long userId,
+            @PageableDefault(sort = "borrowedAt") Pageable pageable) {
         return ResponseEntity.ok(borrowService.getMyBorrows(userId, pageable));
     }
 

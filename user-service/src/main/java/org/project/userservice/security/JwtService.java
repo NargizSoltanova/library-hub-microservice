@@ -23,6 +23,8 @@ public class JwtService {
     public String generateToken(UserEntity userEntity) {
         return Jwts.builder()
                 .subject(userEntity.getUsername())
+                .claim("userId", userEntity.getId())
+                .claim("role", userEntity.getRole().name())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
                 .signWith(getKey())
