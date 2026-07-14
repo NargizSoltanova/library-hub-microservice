@@ -25,6 +25,9 @@ public class BorrowHistoryEntity {
     @Column(name = "book_id", nullable = false)
     private Long bookId;
 
+    @Column(name = "borrow_id", nullable = false, unique = true)
+    private Long borrowId;
+
     @Column(name = "book_name", nullable = false)
     private String bookName;
 

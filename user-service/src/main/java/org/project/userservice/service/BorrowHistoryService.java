@@ -3,7 +3,6 @@ package org.project.userservice.service;
 import lombok.AllArgsConstructor;
 import org.project.userservice.dto.UserBorrowHistoryDto;
 import org.project.userservice.mapper.BorrowHistoryMapper;
-import org.project.userservice.repository.BorrowHistoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class BorrowHistoryService {
-    private final BorrowHistoryRepository borrowHistoryRepository;
     private final UserService userService;
     private final BorrowHistoryMapper borrowHistoryMapper;
 

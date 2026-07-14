@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-borrow-id-to-borrow-history
+      author: nargiz
+      changes:
+        - addColumn:
+            tableName: borrow_histories
+            columns:
+              - column:
+                  name: borrow_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uk_borrow_history_borrow_id
