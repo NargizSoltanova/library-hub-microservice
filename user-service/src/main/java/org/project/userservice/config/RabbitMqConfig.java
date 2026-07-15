@@ -11,6 +11,9 @@ public class RabbitMqConfig {
     public static final String BORROW_QUEUE = "borrow.queue";
     public static final String BORROW_CREATED_KEY = "borrow.created";
     public static final String BORROW_RETURNED_KEY = "borrow.returned";
+    public static final String BORROW_DEAD_EXCHANGE = "borrow.dead.exchange";
+    public static final String BORROW_DEAD_QUEUE = "borrow.dead.queue";
+    public static final String BORROW_DEAD_KEY = "borrow.dead";
 
 
     @Bean
@@ -19,8 +22,22 @@ public class RabbitMqConfig {
     }
 
     @Bean
+    public DirectExchange borrowDeadExchange() {
+        return new DirectExchange(BORROW_DEAD_EXCHANGE, true, false);
+    }
+
+    @Bean
     public Queue borrowQueue() {
-        return QueueBuilder.durable(BORROW_QUEUE).build();
+        return QueueBuilder
+                .durable(BORROW_QUEUE)
+                .deadLetterExchange(BORROW_DEAD_EXCHANGE)
+                .deadLetterRoutingKey(BORROW_DEAD_KEY)
+                .build();
+    }
+
+    @Bean
+    public Queue borrowDeadQueue() {
+        return QueueBuilder.durable(BORROW_DEAD_QUEUE).build();
     }
 
     @Bean
@@ -37,6 +54,14 @@ public class RabbitMqConfig {
                 .bind(borrowQueue)
                 .to(borrowExchange)
                 .with(BORROW_RETURNED_KEY);
+    }
+
+    @Bean
+    public Binding borrowDeadBinding(Queue borrowDeadQueue, DirectExchange borrowDeadExchange) {
+        return BindingBuilder
+                .bind(borrowDeadQueue)
+                .to(borrowDeadExchange)
+                .with(BORROW_DEAD_KEY);
     }
 
     @Bean
