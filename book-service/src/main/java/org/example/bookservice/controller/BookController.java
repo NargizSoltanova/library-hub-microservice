@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.bookservice.dto.BookRequest;
 import org.example.bookservice.dto.BookResponse;
 import org.example.bookservice.service.BookService;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -22,6 +23,7 @@ public class BookController {
     public ResponseEntity<Page<BookResponse>> getBooks(
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) String author,
+            @ParameterObject
             @PageableDefault(sort = "title") Pageable pageable) {
         return ResponseEntity.ok(
                 bookService.getBooks(categoryId, author, pageable)
@@ -36,6 +38,7 @@ public class BookController {
     @GetMapping("/search")
     public ResponseEntity<Page<BookResponse>> search(
             @RequestParam String keyword,
+            @ParameterObject
             @PageableDefault(sort = "title") Pageable pageable) {
         return ResponseEntity.ok(
                 bookService.search(keyword, pageable)

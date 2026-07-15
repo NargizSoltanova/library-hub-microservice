@@ -8,6 +8,7 @@ import org.project.userservice.dto.UserResponse;
 import org.project.userservice.dto.UserUpdateDto;
 import org.project.userservice.service.BorrowHistoryService;
 import org.project.userservice.service.UserService;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -42,14 +43,13 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public Page<UserResponse> getAllUsers(Pageable pageable) {
+    public Page<UserResponse> getAllUsers(@ParameterObject Pageable pageable) {
         return userService.getAllUsers(pageable);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponse> getUserById(
-            @PathVariable Long id) {
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
 
         return ResponseEntity.ok(userService.getUserById(id));
     }

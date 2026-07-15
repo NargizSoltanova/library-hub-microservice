@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.bookservice.dto.BorrowRequest;
 import org.example.bookservice.dto.BorrowResponse;
 import org.example.bookservice.service.BorrowService;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -40,19 +41,20 @@ public class BorrowController {
     @GetMapping("/my")
     public ResponseEntity<Page<BorrowResponse>> getMyBorrows(
             @AuthenticationPrincipal(expression = "id") Long userId,
+            @ParameterObject
             @PageableDefault(sort = "borrowedAt") Pageable pageable) {
         return ResponseEntity.ok(borrowService.getMyBorrows(userId, pageable));
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<BorrowResponse>> getAllBorrows(@PageableDefault(sort = "borrowedAt") Pageable pageable) {
+    public ResponseEntity<Page<BorrowResponse>> getAllBorrows(@ParameterObject @PageableDefault(sort = "borrowedAt") Pageable pageable) {
         return ResponseEntity.ok(borrowService.getAllBorrows(pageable));
     }
 
     @GetMapping("/overdue")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<BorrowResponse>> getOverdueBorrows(@PageableDefault(sort = "dueDate") Pageable pageable) {
+    public ResponseEntity<Page<BorrowResponse>> getOverdueBorrows(@ParameterObject @PageableDefault(sort = "dueDate") Pageable pageable) {
         return ResponseEntity.ok(borrowService.getOverdueBorrows(pageable));
     }
 }
