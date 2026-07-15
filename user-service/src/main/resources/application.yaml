@@ -34,3 +34,7 @@ server:
 jwt:
   secret: 11f4faa6ee78d80d114ecb683ab010f1aa16796db7e4c2ec1632f416d8dd10cd
   expiration: 86400000  # 24 saat (millisaniyə)
+
+logging:
+  level:
+    org.project.userservice: info

@@ -8,6 +8,7 @@ import org.project.userservice.constant.Role;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class UserResponse {
     private Long id;
     private String username;

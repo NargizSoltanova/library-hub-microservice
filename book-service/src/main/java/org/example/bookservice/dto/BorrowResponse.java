@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class BorrowResponse implements Serializable {
     private Long id;
     private Long userId;

@@ -41,6 +41,9 @@ dependencies {
     // RabbitMq
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
 
+    // AOP
+    implementation 'org.springframework.boot:spring-boot-starter-aspectj'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'

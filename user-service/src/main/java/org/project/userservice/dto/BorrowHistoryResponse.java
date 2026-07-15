@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class BorrowHistoryResponse {
     private Long id;
     private UserResponse user;

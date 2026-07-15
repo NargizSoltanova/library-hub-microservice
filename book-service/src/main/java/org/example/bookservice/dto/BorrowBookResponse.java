@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class BorrowBookResponse implements Serializable {
     private Long id;
     private String title;
