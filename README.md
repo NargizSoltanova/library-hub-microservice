@@ -21,6 +21,10 @@ flowchart LR
     BookService --> Redis
     BookService -->|"borrow.created / borrow.returned"| Rabbit
     Rabbit --> UserService
+    UserService --> Logstash["Logstash :5000"]
+    BookService --> Logstash
+    Logstash --> Elasticsearch[("Elasticsearch :9200")]
+    Elasticsearch --> Kibana["Kibana :5601"]
 ```
 
 - `user-service` qeydiyyat, login, JWT yaradılması, profil və borrow tarixçəsini idarə edir.
@@ -56,6 +60,10 @@ flowchart LR
 | RabbitMQ | 5672 | AMQP bağlantısı |
 | RabbitMQ Management | 15672 | Broker idarəetmə paneli |
 | Redis | 6379 | Kitab cache-i |
+| Logstash | 5000 | Strukturlaşdırılmış log qəbulu |
+| Logstash API | 9600 | Logstash monitorinq API-si |
+| Elasticsearch | 9200 | Mərkəzləşdirilmiş log storage və axtarış |
+| Kibana | 5601 | Logların vizuallaşdırılması |
 
 ## İlkin tələblər
 
@@ -306,6 +314,51 @@ Emal edilməyən dead-letter mesajları `user-service` tərəfindən hər 5 dəq
 - `book-service` hər gün saat `00:00`-da vaxtı keçmiş borrow qeydlərini `OVERDUE` edir.
 - `user-service` hər bazar ertəsi saat `09:00`-da 90 gündən çox aktiv olmayan istifadəçiləri loglayır.
 - Scheduler-lər `Asia/Baku` timezone-u ilə işləyir.
+
+## ELK log monitorinqi
+
+Docker Compose Elasticsearch, Logstash və Kibana komponentlərini eyni `8.17.3` versiyası ilə başladır. Hər iki Spring Boot servisi `elk` profili aktiv olduqda logları JSON formatında TCP üzərindən Logstash-a göndərir. Servislər Logstash pipeline-ı sağlam olduqdan sonra başlayır; `library-hub-*` indeks şablonu isə lokal single-node cluster üçün replica sayını avtomatik `0` təyin edir.
+
+- Elasticsearch: [http://localhost:9200](http://localhost:9200)
+- Kibana: [http://localhost:5601](http://localhost:5601)
+- Logstash TCP input: `localhost:5000`
+- Logstash API: [http://localhost:9600](http://localhost:9600)
+
+Log indeksləri servis və tarix üzrə yaradılır:
+
+```text
+library-hub-user-service-YYYY.MM.dd
+library-hub-book-service-YYYY.MM.dd
+```
+
+Kibana-da ilk data view yaratmaq üçün:
+
+1. [http://localhost:5601](http://localhost:5601) ünvanını açın.
+2. `Stack Management` → `Data Views` bölməsinə keçin.
+3. Index pattern kimi `library-hub-*` daxil edin.
+4. Timestamp field kimi `@timestamp` seçin.
+5. `Discover` bölməsində logları servis, level, logger və message üzrə filterləyin.
+
+Yalnız ELK komponentlərini və tətbiq servislərini yenidən başlatmaq:
+
+```bash
+docker compose up -d elasticsearch logstash kibana
+docker compose up --build -d user-service book-service
+```
+
+ELK loglarını yoxlamaq:
+
+```bash
+docker compose logs -f elasticsearch logstash kibana
+```
+
+Elasticsearch indekslərini yoxlamaq:
+
+```bash
+curl http://localhost:9200/_cat/indices?v
+```
+
+ELK lokal development konfiqurasiyasında Elasticsearch security söndürülüb və ELK portları yalnız `127.0.0.1` üzərindən açılıb. Bu konfiqurasiyanı internetə açıq production mühitində olduğu kimi istifadə etməyin.
 
 ## Testlər
 

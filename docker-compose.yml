@@ -63,6 +63,62 @@ services:
       retries: 10
     restart: unless-stopped
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.3
+    container_name: library-elasticsearch
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    ports:
+      - "127.0.0.1:9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s' || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 30s
+    restart: unless-stopped
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.17.3
+    container_name: library-logstash
+    environment:
+      LS_JAVA_OPTS: -Xms256m -Xmx256m
+    ports:
+      - "127.0.0.1:5000:5000"
+      - "127.0.0.1:9600:9600"
+    volumes:
+      - ./elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./elk/logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - ./elk/logstash/templates:/usr/share/logstash/templates:ro
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9600/_node/pipelines/main | grep -q '\"status\":\"green\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.17.3
+    container_name: library-kibana
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      XPACK_SECURITY_ENABLED: "false"
+      TELEMETRY_ENABLED: "false"
+    ports:
+      - "127.0.0.1:5601:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+
   user-service:
     build:
       context: ./user-service
@@ -78,12 +134,18 @@ services:
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
+      SPRING_PROFILES_ACTIVE: elk
+      LOGSTASH_HOST: logstash
+      LOGSTASH_PORT: 5000
+      APP_ENV: docker
     ports:
       - "8081:8081"
     depends_on:
       postgres-users:
         condition: service_healthy
       rabbitmq:
+        condition: service_healthy
+      logstash:
         condition: service_healthy
     restart: unless-stopped
 
@@ -104,6 +166,10 @@ services:
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
+      SPRING_PROFILES_ACTIVE: elk
+      LOGSTASH_HOST: logstash
+      LOGSTASH_PORT: 5000
+      APP_ENV: docker
     ports:
       - "8082:8082"
     depends_on:
@@ -113,8 +179,11 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      logstash:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
   postgres_users_data:
   postgres_books_data:
+  elasticsearch_data:

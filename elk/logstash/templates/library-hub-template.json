@@ -1,0 +1,42 @@
+{
+  "index_patterns": [
+    "library-hub-*"
+  ],
+  "priority": 500,
+  "version": 1,
+  "_meta": {
+    "description": "Library Hub application log indices"
+  },
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    },
+    "mappings": {
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        },
+        "environment": {
+          "type": "keyword"
+        },
+        "level": {
+          "type": "keyword"
+        },
+        "logger_name": {
+          "type": "keyword"
+        },
+        "service": {
+          "properties": {
+            "name": {
+              "type": "keyword"
+            }
+          }
+        },
+        "thread_name": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
