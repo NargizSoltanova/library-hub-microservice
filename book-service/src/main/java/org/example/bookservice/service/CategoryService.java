@@ -7,8 +7,11 @@ import org.example.bookservice.entity.CategoryEntity;
 import org.example.bookservice.exception.CategoryNotFoundException;
 import org.example.bookservice.exception.ConflictException;
 import org.example.bookservice.mapper.CategoryMapper;
+import org.example.bookservice.repository.BookRepository;
 import org.example.bookservice.repository.CategoryRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final BookRepository bookRepository;
     private final CategoryMapper categoryMapper;
 
     public List<CategoryResponse> getAll() {
@@ -43,6 +47,8 @@ public class CategoryService {
         return categoryMapper.toResponse(savedCategory);
     }
 
+    @Transactional
+    @CacheEvict(value = "books", allEntries = true)
     public CategoryResponse update(Long id, CategoryRequest request) {
         var category = findById(id);
         request.setName(request.getName().trim());
@@ -59,9 +65,15 @@ public class CategoryService {
         return categoryMapper.toResponse(updatedCategory);
     }
 
+    @Transactional
     public void delete(Long id) {
-        CategoryEntity category = findById(id);
+        var category = findById(id);
+
+        if (bookRepository.existsByCategoryId(id))
+            throw new ConflictException("Category cannot be deleted because it is used by books");
+
         categoryRepository.delete(category);
+        categoryRepository.flush();
     }
 
     private CategoryEntity findById(Long id) {

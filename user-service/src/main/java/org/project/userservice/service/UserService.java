@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.project.userservice.dto.UserResponse;
 import org.project.userservice.dto.UserUpdateDto;
 import org.project.userservice.entity.UserEntity;
+import org.project.userservice.exception.DuplicateEmailException;
 import org.project.userservice.exception.UserNotFoundException;
 import org.project.userservice.mapper.UserMapper;
 import org.project.userservice.repository.UserRepository;
@@ -26,6 +27,10 @@ public class UserService {
 
     public UserResponse update(UserUpdateDto userDto){
         UserEntity user = getUserEntity();
+
+        if (userRepository.existsByEmailAndIdNot(userDto.getEmail(),user.getId())) {
+            throw new DuplicateEmailException("Email already exists");
+        }
         user.setEmail(userDto.getEmail());
         user.setFullName(userDto.getFullName());
         var updatedUser = userRepository.save(user);

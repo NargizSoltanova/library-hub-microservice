@@ -17,6 +17,7 @@ public class RegisterRequest {
 
     @NotBlank
     @Size(min=8)
+    @ToString.Exclude
     private String password;
 
     @NotBlank

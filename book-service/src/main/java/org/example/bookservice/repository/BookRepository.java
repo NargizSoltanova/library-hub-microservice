@@ -17,6 +17,8 @@ public interface BookRepository extends JpaRepository<BookEntity,Long>, JpaSpeci
 
     boolean existsByIsbnIgnoreCaseAndIdNot(String isbn, Long id);
 
+    boolean existsByCategoryId(Long categoryId);
+
     Optional<BookEntity> findByIdAndIsActiveTrue(Long id);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

@@ -54,6 +54,16 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateEmail(DuplicateEmailException exception) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse(
+                        exception.getMessage(),
+                        400,
+                        LocalDateTime.now()
+                ));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException exception) {
         String message = exception.getBindingResult()
