@@ -35,6 +35,9 @@
         },
         "thread_name": {
           "type": "keyword"
+        },
+        "message": {
+          "type": "text"
         }
       }
     }

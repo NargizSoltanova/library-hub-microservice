@@ -1,5 +1,6 @@
 package org.project.userservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.project.userservice.dto.auth.LoginRequest;
@@ -21,6 +22,10 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
+    @Operation(
+            summary = "İstifadəçi qeydiyyatı",
+            description = "Yeni istifadəçinin qeydiyyatdan keçirilməsi. Yeni istifadəçi USER rolu ilə yaradılır."
+    )
     public ResponseEntity<RegisterResponse> register(
             @Valid @RequestBody RegisterRequest request) {
 
@@ -30,6 +35,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(
+            summary = "İstifadəçi girişi",
+            description = "İstifadəçi adı və şifrəsi ilə giriş edilərək JWT token əldə olunması."
+    )
     public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody LoginRequest request) {
 
