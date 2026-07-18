@@ -13,9 +13,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -25,6 +27,7 @@ public class UserService {
         return userMapper.toResponse(user);
     }
 
+    @Transactional
     public UserResponse update(UserUpdateDto userDto){
         UserEntity user = getUserEntity();
 
@@ -37,6 +40,7 @@ public class UserService {
         return userMapper.toResponse(updatedUser);
     }
 
+    @Transactional
     public void deleteUser(Long id){
         UserEntity user = getUserEntity(id);
         user.setIsActive(false);

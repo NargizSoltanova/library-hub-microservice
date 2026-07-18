@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.project.userservice.dto.UserBorrowHistoryDto;
 import org.project.userservice.mapper.BorrowHistoryMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class BorrowHistoryService {
     private final UserService userService;
     private final BorrowHistoryMapper borrowHistoryMapper;
 
+    @Transactional(readOnly = true)
     public List<UserBorrowHistoryDto> myBorrowHistory() {
         var user = userService.getUserEntity();
         return user.getBorrowHistories().stream().map(borrowHistoryMapper :: toDto).toList();

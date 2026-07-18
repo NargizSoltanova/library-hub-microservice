@@ -22,6 +22,7 @@ public class CategoryService {
     private final BookRepository bookRepository;
     private final CategoryMapper categoryMapper;
 
+    @Transactional(readOnly = true)
     public List<CategoryResponse> getAll() {
         return categoryRepository.findAll()
                 .stream()
@@ -29,11 +30,13 @@ public class CategoryService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public CategoryResponse getById(Long id) {
         CategoryEntity category = findById(id);
         return categoryMapper.toResponse(category);
     }
 
+    @Transactional
     public CategoryResponse create(CategoryRequest request) {
         request.setName(request.getName().trim());
 

@@ -50,6 +50,7 @@ public class AuthService {
                 .build();
     }
 
+    @Transactional
     public RegisterResponse register(RegisterRequest registerRequest) {
 
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
