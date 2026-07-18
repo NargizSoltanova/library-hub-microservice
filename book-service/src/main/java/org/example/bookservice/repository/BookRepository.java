@@ -17,9 +17,9 @@ import java.util.Optional;
 
 @Repository
 public interface BookRepository extends JpaRepository<BookEntity,Long>, JpaSpecificationExecutor<BookEntity> {
-    boolean existsByIsbnIgnoreCase(String isbn);
+    Optional<BookEntity> findByIsbnIgnoreCase(String isbn);
 
-    boolean existsByIsbnIgnoreCaseAndIdNot(String isbn, Long id);
+    Optional<BookEntity> findByIsbnIgnoreCaseAndIdNot(String isbn, Long id);
 
     boolean existsByCategoryId(Long categoryId);
 

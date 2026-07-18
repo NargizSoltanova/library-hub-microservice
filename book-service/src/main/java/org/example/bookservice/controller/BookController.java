@@ -78,6 +78,15 @@ public class BookController {
         return ResponseEntity.ok(bookService.update(id, request));
     }
 
+    @PatchMapping("/{id}/activate")
+    @Operation(
+            summary = "Kitabın aktivləşdirilməsi",
+            description = "ID-yə görə deaktiv kitabın yenidən aktivləşdirilməsi. Yalnız ADMIN rolu üçün əlçatandır."
+    )
+    public ResponseEntity<BookResponse> activate(@PathVariable Long id) {
+        return ResponseEntity.ok(bookService.activate(id));
+    }
+
     @DeleteMapping("/{id}")
     @Operation(
             summary = "Kitabın silinməsi",

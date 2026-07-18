@@ -266,6 +266,7 @@ Kitab tərəfindən istifadə edilən kateqoriya silinə bilməz və API `409 Co
 | GET | `/books/search?keyword=x` | Public | Ad və müəllif üzrə axtarış |
 | POST | `/books` | ADMIN | Kitab yaratmaq |
 | PUT | `/books/{id}` | ADMIN | Kitabı yeniləmək |
+| PATCH | `/books/{id}/activate` | ADMIN | Deaktiv kitabı yenidən aktivləşdirmək |
 | DELETE | `/books/{id}` | ADMIN | Kitabın soft delete edilməsi |
 
 Siyahı nümunəsi:

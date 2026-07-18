@@ -50,6 +50,10 @@ public class SecurityConfig {
                                 "/api/categories/**")
                         .hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.PATCH,
+                                "/api/books/**")
+                        .hasRole("ADMIN")
+
                         .requestMatchers(HttpMethod.DELETE,
                                 "/api/books/**",
                                 "/api/categories/**")

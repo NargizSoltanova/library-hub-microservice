@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Year;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -116,6 +117,20 @@ public class BookService {
         bookRepository.save(book);
     }
 
+    @Transactional
+    @CacheEvict(value = "books", allEntries = true)
+    public BookResponse activate(Long id) {
+        var book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException("Book not found"));
+
+        if (Boolean.TRUE.equals(book.getIsActive()))
+            throw new ConflictException("Book is already active");
+
+        book.setIsActive(true);
+        bookRepository.save(book);
+        return bookMapper.toResponse(bookRepository.save(book));
+    }
+
     private BookEntity getActiveBookEntity(Long id) {
         return bookRepository.findByIdAndIsActiveTrue(id)
                 .orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id));
@@ -131,16 +146,24 @@ public class BookService {
     private void validateUniqueIsbn(String isbn, Long bookId) {
         String normalizedIsbn = normalizeIsbn(isbn);
 
-        boolean exists = bookId == null
-                ? bookRepository.existsByIsbnIgnoreCase(normalizedIsbn)
-                : bookRepository.existsByIsbnIgnoreCaseAndIdNot(
+        Optional<BookEntity> existingBook = bookId == null
+                ? bookRepository.findByIsbnIgnoreCase(normalizedIsbn)
+                : bookRepository.findByIsbnIgnoreCaseAndIdNot(
                 normalizedIsbn,
                 bookId
         );
 
-        if (exists)
-            throw new ConflictException("Duplicate isbn");
+        existingBook.ifPresent(book -> {
+            if (Boolean.FALSE.equals(book.getIsActive())) {
+                throw new ConflictException(
+                        "An inactive book with ISBN " + normalizedIsbn
+                                + " already exists with id " + book.getId()
+                                + ". Reactivate the existing book instead."
+                );
+            }
 
+            throw new ConflictException("A book with ISBN " + normalizedIsbn + " already exists.");
+        });
     }
 
     private void validateCopyCounts(BookRequest request) {
