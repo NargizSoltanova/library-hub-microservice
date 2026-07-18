@@ -1,11 +1,13 @@
 package org.example.bookservice.security;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -18,6 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
+    private final SecurityExceptionHandler securityExceptionHandler;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -34,17 +37,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = header.substring(7);
 
-        if (!jwtService.isTokenValid(token)) {
-            filterChain.doFilter(request, response);
+        JwtUserPrincipal principal;
+        try {
+            principal = jwtService.extractPrincipal(token);
+        } catch (JwtException | IllegalArgumentException exception) {
+            SecurityContextHolder.clearContext();
+            securityExceptionHandler.commence(
+                    request,
+                    response,
+                    new BadCredentialsException("Invalid or expired JWT token", exception)
+            );
             return;
         }
-
-        Long id = jwtService.extractUserId(token);
-        String username = jwtService.extractUsername(token);
-        String role = jwtService.extractRole(token);
-
-        JwtUserPrincipal principal =
-                new JwtUserPrincipal(id, username, role);
 
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(

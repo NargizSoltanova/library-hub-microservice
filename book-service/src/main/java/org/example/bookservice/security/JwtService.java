@@ -16,18 +16,17 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secret;
 
-    public String extractUsername(String token) {
-        return extractAllClaims(token).getSubject();
-    }
-
-    public Long extractUserId(String token) {
+    public JwtUserPrincipal extractPrincipal(String token) {
         Claims claims = extractAllClaims(token);
-        return claims.get("userId", Long.class);
-    }
+        Long userId = claims.get("userId", Long.class);
+        String username = claims.getSubject();
+        String role = claims.get("role", String.class);
 
-    public String extractRole(String token) {
-        Claims claims = extractAllClaims(token);
-        return claims.get("role", String.class);
+        if (userId == null || username == null || username.isBlank() || role == null || role.isBlank()) {
+            throw new IllegalArgumentException("JWT token does not contain required claims");
+        }
+
+        return new JwtUserPrincipal(userId, username, role);
     }
 
     private SecretKey getSignInKey() {
@@ -41,14 +40,5 @@ public class JwtService {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            extractAllClaims(token);
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
     }
 }

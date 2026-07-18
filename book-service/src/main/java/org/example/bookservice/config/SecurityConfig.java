@@ -2,6 +2,7 @@ package org.example.bookservice.config;
 
 import lombok.RequiredArgsConstructor;
 import org.example.bookservice.security.JwtAuthenticationFilter;
+import org.example.bookservice.security.SecurityExceptionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final SecurityExceptionHandler securityExceptionHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -54,6 +56,10 @@ public class SecurityConfig {
                         .hasRole("ADMIN")
 
                         .anyRequest().authenticated())
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(securityExceptionHandler)
+                        .accessDeniedHandler(securityExceptionHandler)
+                )
 
                 .addFilterBefore(
                         jwtAuthenticationFilter,
