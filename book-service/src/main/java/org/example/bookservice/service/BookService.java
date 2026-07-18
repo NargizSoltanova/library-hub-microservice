@@ -20,6 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Year;
+
 @Service
 @RequiredArgsConstructor
 public class BookService {
@@ -66,6 +68,7 @@ public class BookService {
     public BookResponse create(BookRequest request) {
         validateCopyCounts(request);
         validateUniqueIsbn(request.getIsbn(), null);
+        validatePublishedYear(request);
 
         var category = getCategory(request.getCategoryId());
 
@@ -143,6 +146,13 @@ public class BookService {
     private void validateCopyCounts(BookRequest request) {
         if (request.getAvailableCopies() > request.getTotalCopies()) {
             throw new BadRequestException("Insufficient number of copies");
+        }
+    }
+
+    private static void validatePublishedYear(BookRequest request) {
+        if (request.getPublishedYear() != null
+                && request.getPublishedYear() > Year.now().getValue()) {
+            throw new BadRequestException("Published year cannot be greater than the current year" );
         }
     }
 

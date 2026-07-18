@@ -11,19 +11,19 @@ import lombok.ToString;
 @Setter
 @ToString
 public class RegisterRequest {
-    @NotBlank
-    @Email
+    @NotBlank(message = "Email must not be blank")
+    @Email(message = "Email must be in a valid format")
     private String email;
 
-    @NotBlank
-    @Size(min=8)
+    @NotBlank(message = "Password must not be blank")
+    @Size(min = 8, message = "Password must contain at least 8 characters")
     @ToString.Exclude
     private String password;
 
-    @NotBlank
-    @Size(min=3, max=50)
+    @NotBlank(message = "Username must not be blank")
+    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
     private String username;
 
-    @Size(max=100)
+    @Size(max = 100, message = "Full name must not exceed 100 characters")
     private String fullName;
 }

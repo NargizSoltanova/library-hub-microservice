@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class BorrowRequest {
-    @NotNull()
-    @Positive()
+    @NotNull(message = "Book ID is required")
+    @Positive(message = "Book ID must be positive")
     private Long bookId;
 }

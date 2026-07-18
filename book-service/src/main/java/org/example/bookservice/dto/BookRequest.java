@@ -10,31 +10,31 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class BookRequest {
-    @NotBlank()
+    @NotBlank(message = "Book title must not be blank")
     private String title;
 
-    @NotBlank()
-    @Size(max = 150)
+    @NotBlank(message = "Author name must not be blank")
+    @Size(max = 150, message = "Author name must not exceed 150 characters")
     private String author;
 
-    @NotBlank()
-    @Size(max = 20)
+    @NotBlank(message = "ISBN must not be blank")
+    @Size(max = 20, message = "ISBN must not exceed 20 characters")
     private String isbn;
 
     private String description;
 
-    @NotNull()
-    @Positive()
+    @NotNull(message = "Category ID is required")
+    @Positive(message = "Category ID must be positive")
     private Long categoryId;
 
-    @NotNull()
-    @PositiveOrZero()
+    @NotNull(message = "Total copies is required")
+    @PositiveOrZero(message = "Total copies must not be negative")
     private Integer totalCopies;
 
-    @NotNull()
-    @PositiveOrZero()
+    @NotNull(message = "Available copies is required")
+    @PositiveOrZero(message = "Available copies must not be negative")
     private Integer availableCopies;
 
-    @Min(value = 0)
+    @Min(value = 1, message = "Published year must be greater than 0")
     private Integer publishedYear;
 }

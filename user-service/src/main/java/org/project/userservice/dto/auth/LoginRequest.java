@@ -9,10 +9,10 @@ import lombok.ToString;
 @Setter
 @ToString
 public class LoginRequest {
-    @NotBlank
+    @NotBlank(message = "Username must not be blank")
     private String username;
 
     @ToString.Exclude
-    @NotBlank
+    @NotBlank(message = "Password must not be blank")
     private String password;
 }

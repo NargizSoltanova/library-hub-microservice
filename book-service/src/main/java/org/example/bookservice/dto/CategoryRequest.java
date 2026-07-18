@@ -10,8 +10,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class CategoryRequest {
-    @NotBlank
-    @Size(max = 100)
+    @NotBlank(message = "Category name must not be blank")
+    @Size(max = 100, message = "Category name must not exceed 100 characters")
     private String name;
     private String description;
 }
